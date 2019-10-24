@@ -1,11 +1,25 @@
-from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
 from .models import Transaction, Account
 from .forms import AddAccount, AddTransaction
+# This decorator is used to make a view accessible by logged in users only.
+from django.contrib.auth.decorators import login_required
+# Importing Predefined User model from Django
 from django.contrib.auth.models import User
-from django.shortcuts import render, redirect
+# User Authication packages
 from django.contrib.auth import authenticate, login, logout
+# Importing Messages package i.e. for error messages
 from django.contrib import messages
+# Importing Predefined Signup Form
 from django.contrib.auth.forms import UserCreationForm
+
+""" 
+    USER Authentication 
+        user_login is used for login. It was copied from another code.
+        user_register is used for registering new user. Probably doesn't work.
+        user_logout is used for logging out user from session.
+"""
+
+# Start of User Authentication
 
 
 def user_login(request):
@@ -50,6 +64,17 @@ def user_logout(request):
     logout(request)
     return redirect('auth:login')
 
+# End of User Authentication
+
+
+"""
+    USER Profile
+        - Usual informations such as name, email
+        - Contains User Accounts
+        - Contains User Transactions
+"""
+
+
 def profile(request, username):
     profile = User.objects.get(username=username)
     all_transaction_list = Transaction.objects.all()
@@ -64,9 +89,87 @@ def profile(request, username):
     else:
         return render(request, 'user/profile.html', {'profile': profile, 'user_transaction': user_transaction})
 
+
+"""
+    Accounts:
+        - Cash, Bank Account, Online Wallet, Blockchain Wallet.
+        - A single account can have a single currency.
+"""
+
+
+def account(request):
+    all_account_list = Account.objects.all()
+
+    if all_account_list is None:
+        messages.error(request, "No account exists in the system.")
+        return render(request, 'account/account.html', {'account_list': None})
+    else:
+        return render(request, 'account/account.html', {'account_list': all_account_list})
+
+# Account Profile Details: IT shows the account profile, amount it has, and all the transactions assosiated with it.
+
+
+def account_details(request, account_id):
+    acc = Account.objects.get(id=account_id)
+    accnm = acc.name
+    transaction_list = Transaction.objects.filter(account__icontains=accnm)
+    USER = User.objects.all()
+
+    if transaction_list is None:
+        messages.error(request, "No transaction exists in the system.")
+        return render(request, 'account/account_details.html', {'account': acc, 'account_transaction': None, 'users': USER})
+    else:
+        return render(request, 'account/account_details.html', {'account': acc, 'account_transaction': transaction_list, 'users': USER})
+
+# Add a new account
+
+
+def add_account(request):
+    if request.method == 'POST':
+
+        form = AddAccount(request.POST)
+        if form.is_valid():
+            account = Account(
+                name=form.cleaned_data['name'],
+                balance=form.cleaned_data['balance'],
+                currency=form.cleaned_data['currency'],
+                description=form.cleaned_data['description'],
+            )
+            account.save()
+            messages.success(request, "Successfully added a new account!")
+            return redirect('backend:account')
+        else:
+            messages.warning(request, "Couldn't add new account")
+            return redirect('backend:account')
+
+    else:
+        form = AddAccount()
+        return render(request, 'account/add_account.html', {'form': form})
+
+
+"""
+    Transactions:
+        - Income, Expenditure and Transfers.
+        * Add Transfers from one account to another, if the currency is different automatically calculate it.
+"""
+
+
+def transaction(request):
+    all_transaction_list = Transaction.objects.all()
+    USER = User.objects.all()
+
+    if all_transaction_list is None:
+        messages.error(request, "No transaction exists in the system.")
+        return render(request, 'transaction/transaction.html', {'transaction_list': None, 'users': USER})
+    else:
+        return render(request, 'transaction/transaction.html', {'transaction_list': all_transaction_list, 'users': USER})
+
+# Add a new transaction
+
+
 def add_transaction(request):
     all_account_list = Account.objects.all()
-    
+
     if request.method == 'POST':
 
         form = AddTransaction(request.POST)
@@ -102,56 +205,3 @@ def add_transaction(request):
     else:
         form = AddTransaction()
         return render(request, 'transaction/add_transaction.html', {'form': form, 'account_list': all_account_list})
-
-def add_account(request):
-    if request.method == 'POST':
-
-        form = AddAccount(request.POST)
-        if form.is_valid():
-            account = Account(
-                name = form.cleaned_data['name'],
-                balance = form.cleaned_data['balance'],
-                currency = form.cleaned_data['currency'],
-                description = form.cleaned_data['description'],
-            )
-            account.save()
-            messages.success(request, "Successfully added a new account!")
-            return redirect('backend:account')
-        else:
-            messages.warning(request, "Couldn't add new account")
-            return redirect('backend:account')
-
-    else:
-        form = AddAccount()
-        return render(request, 'account/add_account.html', {'form': form})
-
-def account(request):
-    all_account_list = Account.objects.all()
-
-    if all_account_list is None:
-        messages.error(request, "No account exists in the system.")
-        return render(request, 'account/account.html', {'account_list': None})
-    else:
-        return render(request, 'account/account.html', {'account_list': all_account_list})
-
-def transaction(request):
-    all_transaction_list = Transaction.objects.all()
-    USER = User.objects.all()
-
-    if all_transaction_list is None:
-        messages.error(request, "No transaction exists in the system.")
-        return render(request, 'transaction/transaction.html', {'transaction_list': None, 'users': USER})
-    else:
-        return render(request, 'transaction/transaction.html', {'transaction_list': all_transaction_list, 'users': USER})
-
-def account_details(request, account_id):
-    acc = Account.objects.get(id=account_id)
-    accnm = acc.name
-    transaction_list = Transaction.objects.filter(account__icontains=accnm)
-    USER = User.objects.all()
-
-    if transaction_list is None:
-        messages.error(request, "No transaction exists in the system.")
-        return render(request, 'account/account_details.html', {'account': acc, 'account_transaction': None, 'users': USER})
-    else:
-        return render(request, 'account/account_details.html', {'account': acc, 'account_transaction': transaction_list, 'users': USER})
