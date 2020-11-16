@@ -1,2 +1,4 @@
-Django
-django-widget-tweaks
+django==2.2.16
+djangorestframework==3.12.1
+markdown==3.3.3
+django-filter==2.4.0
