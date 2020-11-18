@@ -29,7 +29,7 @@ class TransactionSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class ChangePasswordSerializer(serializers.Serializer):
-    model = UserProfile
+    model = User
     old_password = serializers.CharField(required=True)
     new_password = serializers.CharField(required=True)
 

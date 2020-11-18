@@ -1,7 +1,7 @@
 
 from backend.models import *
 from rest_framework import viewsets, permissions, status, generics
-from .serializers import *
+from .serializer import *
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.response import Response
 from django.contrib.auth.models import User
