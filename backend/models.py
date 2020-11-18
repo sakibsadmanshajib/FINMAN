@@ -13,16 +13,19 @@ class Account(models.Model):
     id = models.CharField(max_length=128, primary_key=True,
                           blank=True, unique=True, default=uuid.uuid4)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    name = models.CharField(max_length=128, default='Cash')
-    type = models.CharField(max_length=128, null=True)
+    name = models.CharField(max_length=128)
+    type = models.CharField(max_length=128, default='Cash')
     balance = models.DecimalField(max_digits=20, decimal_places=2, default=0)
     currency = models.CharField(max_length=4, default='BDT')
 
     def __str__(self):
         return self.name
 
+    class Meta:
+        unique_together = ['user', 'name', 'type']
+
 class BankAccount(models.Model):
-    account = models.ForeignKey(Account, on_delete=models.CASCADE)
+    account = models.OneToOneField(Account, on_delete=models.CASCADE)
     bankName = models.CharField(max_length=128)
     bankBranch = models.CharField(max_length=128)
     bankAccountType = models.CharField(max_length=128)
@@ -30,7 +33,7 @@ class BankAccount(models.Model):
     bankAccountNumber = models.CharField(max_length=128)
 
 class DigitalWallet(models.Model):
-    account = models.ForeignKey(Account, on_delete=models.CASCADE)
+    account = models.OneToOneField(Account, on_delete=models.CASCADE)
     serviceName = models.CharField(max_length=128)
     serviceID = models.CharField(max_length=128)
 
@@ -40,8 +43,8 @@ class Transaction(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     timestamp = models.DateTimeField(default=timezone.now())
     account = models.ForeignKey(Account, on_delete=models.CASCADE)
-    type = models.CharField(max_length=8, default='Debit')
-    amount = models.DecimalField(max_digits=20, decimal_places=2, default=0)
+    type = models.CharField(max_length=8)
+    amount = models.DecimalField(max_digits=20, decimal_places=2)
     reason = models.CharField(max_length=128)
     remark = models.CharField(max_length=256)
 

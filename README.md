@@ -12,13 +12,13 @@ An app developed to keep record of the income and expenditure of someone.
 
 # Disclaimer
 
-I haven't tested the api after writing it.
+Well, I did test it, but I can tell there are so manny security holes, bugs. Extra points if you can make the backend better as well.
 
 # How to Run this API
 
 1. Install `python` and `virtualenv` on linux system or `anaconda` on your windows system.
 2. Create an environment and install the requirements using `pip install -r requirements.txt`.
-3. Migrate using `python manage.py makemigrations` and `python manage.py migrate`
+3. Migrate using `python manage.py makemigrations backend` and `python manage.py migrate`
 4. Create a superuser using `python manage.py createsuperuser`.
 5. Run this command to start the server. `python manage.py runserver` adn the API will be available at http://localhost:8000/.
 6. Get a token from http://localhost:8000/get-token/ by sending a POST request like this one.
@@ -40,6 +40,7 @@ Read more about it in Django Rest Frameworks' documentation.
     - type: 
     ```
             {
+                'Cash': 'Cash',
                 'Bank' : 'Ask the user if they want to fillup the BankAccount Model and pass the Account.id to account.',
                 'Digital Wallet' : Ask the user if they want to fillup DigitalWallet Model and pass the Account.id to account.'
             }
@@ -118,3 +119,54 @@ Read more about it in Django Rest Frameworks' documentation.
             }
     ```
     - reason: Ask the user for input
+
+# API Endpoints
+    base = http://localhost:8000/
+    Use this reference: https://bezkoder.com/django-rest-api/
+    1. Getting Tokens from username and password:
+        url = base + get-token
+        POST request
+        ```
+        {
+            "username": "your_username",
+            "password": "your_password"
+        }
+        ```
+    2. Changing Password:
+        url = base + change-password
+        PUT request
+        ```
+        {
+            "old_password": "your_old_password",
+            "new_password": "your_new_password"
+        }
+        ```
+    3. Create new user:
+        url = base + register
+        POST request
+        ```
+        {
+            "username": "their_username",
+            "password": "their_password"
+        }
+        ```
+    4. extention of user:
+        url = base + extended
+    5. list or retrive userid:
+        url = base + userid
+            search parameters:
+                url + ?user=<username>
+    6. account:
+        url = base + account
+    7. bankaccount:
+        url = base + bankaccount
+            search parameters:
+                url + ?account_id=<account.id found from 6>
+    8. digitalwallet:
+        url = base + digitalwallet
+            search parameters:
+                url + ?account_id=<account.id found from 6>
+    9. transaction:
+        url = base + transaction
+            search parameters:
+                url + ?account_id=<account.id found from 6>

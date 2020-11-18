@@ -46,6 +46,21 @@ class UserCreateViewSet(generics.CreateAPIView):
         permissions.AllowAny
     ]
 
+class UserIDViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = UserIDSerializer
+    permission_classes = [
+        permissions.IsAuthenticated
+    ]
+    authentication_classes = [
+        TokenAuthentication
+    ]
+    def get_queryset(self):
+        queryset = User.objects.all()
+        user = self.request.query_params.get('user', None)
+        if user is not None:
+            queryset = User.objects.filter(username=user)
+        return queryset
+
 class ExtendedViewSet(viewsets.ModelViewSet):
     queryset = Extended.objects.all()
     permission_classes = [
@@ -79,8 +94,10 @@ class BankAccountViewSet(viewsets.ModelViewSet):
     serializer_class = BankAccountSerializer
 
     def get_queryset(self):
+        queryset = BankAccount.objects.all()
         account_id = self.request.query_params.get('account_id', None)
-        queryset = BankAccount.objects.filter(account=account_id)
+        if account_id is not None:
+            queryset = BankAccount.objects.filter(account=account_id)
         return queryset
 
 class DigitalWalletViewSet(viewsets.ModelViewSet):
@@ -93,8 +110,10 @@ class DigitalWalletViewSet(viewsets.ModelViewSet):
     serializer_class = DigitalWalletSerializer
 
     def get_queryset(self):
+        queryset = DigitalWallet.objects.all()
         account_id = self.request.query_params.get('account_id', None)
-        queryset = DigitalWallet.objects.filter(account=account_id)
+        if account_id is not None:
+            queryset = DigitalWallet.objects.filter(account=account_id)
         return queryset
 
 class TransactionViewSet(viewsets.ModelViewSet):
@@ -107,7 +126,7 @@ class TransactionViewSet(viewsets.ModelViewSet):
     serializer_class = TransactionSerializer
 
     def get_queryset(self):
-        queryset = Course.objects.all()
+        queryset = Transaction.objects.all()
         account_id = self.request.query_params.get('account_id', None)
         if account_id is not None:
             queryset = queryset.filter(account_id=account_id, user=self.request.user.id)

@@ -5,6 +5,7 @@ from rest_framework.authtoken import views
 
 router = routers.DefaultRouter()
 router.register('extended', ExtendedViewSet, 'extended')
+router.register('userid', UserIDViewSet, 'userid')
 router.register('account', AccountViewSet, 'account')
 router.register('bankaccount', BankAccountViewSet, 'bankaccount')
 router.register('digitalwallet', DigitalWalletViewSet, 'digitalwallet')
