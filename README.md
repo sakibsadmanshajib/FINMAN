@@ -4,7 +4,11 @@ An app developed to keep record of the income and expenditure of someone.
 
 - The plan is to create an android app which will help keep record of all your transactions and give you a daily, weekly, bi-weekly or monthly report.
 
-- Future plan is to add data-minig capabilties to seemlessly adding transactions without the interaction of the user.
+- Inspired by the Apple Card's App which gives you detailed view of where you've spend your money and when.
+
+- It'll keep track of how much money a person have iun which account and they can make transactions from each account.
+
+- Future plan is to add data-minig capabilties to seemlessly adding transactions without the interaction of the user from Mobile phone's SMS or user's email.
 
 # Technologies used
 
@@ -118,7 +122,7 @@ Read more about it in Django Rest Frameworks' documentation.
                 }
             }
     ```
-    - reason: Ask the user for input
+    - remark: Ask the user for input
 
 # API Endpoints
     base = http://localhost:8000/
