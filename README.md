@@ -21,16 +21,16 @@ I haven't tested the api after writing it.
 3. Migrate using `python manage.py makemigrations` and `python manage.py migrate`
 4. Create a superuser using `python manage.py createsuperuser`.
 5. Run this command to start the server. `python manage.py runserver` adn the API will be available at http://localhost:8000/.
-6. Get a token from http://localhost:8000/get-token/.
+6. Get a token from http://localhost:8000/get-token/ by sending a POST request like this one.
     ```
     {
         "username": "your_superuser_username",
         "password": "your_superuser_password"
     }
     ```
-7. For Authentication, use the token as a Header
-    Key: Value
-    Authorization: Token user_token_collected_from_get-token
+7. For Authentication, use the token as a Header Key: Value \
+    `Authorization: Token user_token_collected_from_get-token`
+Read more about it in Django Rest Frameworks' documentation.
 
 
 # Variables in Models
