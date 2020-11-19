@@ -41,7 +41,7 @@ class Transaction(models.Model):
     id = models.CharField(max_length=128, primary_key=True,
                           blank=True, unique=True, default=uuid.uuid4)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    timestamp = models.DateTimeField(default=timezone.now())
+    timestamp = models.DateTimeField(auto_now_add=True)
     account = models.ForeignKey(Account, on_delete=models.CASCADE)
     type = models.CharField(max_length=8)
     amount = models.DecimalField(max_digits=20, decimal_places=2)
@@ -61,3 +61,10 @@ class Extended(models.Model):
         max_digits=20, decimal_places=2, default=0)
     total_credit = models.DecimalField(
         max_digits=20, decimal_places=2, default=0)
+
+def extended_receiver(sender, instance, created, *args, **kwargs):
+    if created:
+        extended = Extended.objects.create(user=instance)
+
+
+post_save.connect(extended_receiver, sender=settings.AUTH_USER_MODEL)
