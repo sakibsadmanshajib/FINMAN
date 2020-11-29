@@ -8,6 +8,8 @@ from django.utils import timezone
 # Package required to create unique id for transactions
 import uuid
 
+from django.conf import settings
+
 
 class Account(models.Model):
     id = models.CharField(max_length=128, primary_key=True,
